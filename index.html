@@ -127,6 +127,17 @@
   table.abo tfoot td{font-weight:700;background:color-mix(in srgb,var(--card) 80%,var(--line))}
   .hint{color:var(--muted);font-size:12px;margin-top:8px}
 
+  /* ---- notes ---- */
+  .notes details{background:var(--card);border:1px solid var(--line);border-radius:12px;
+    margin-bottom:10px;overflow:hidden}
+  .notes summary{padding:12px 14px;font-weight:600;cursor:pointer;list-style:none;font-size:14px}
+  .notes summary::-webkit-details-marker{display:none}
+  .notes summary::before{content:"▸";color:var(--muted);margin-right:8px;font-size:12px}
+  .notes details[open] summary::before{content:"▾"}
+  .notes .body{padding:2px 16px 14px}
+  .notes ul{margin:0;padding-left:20px}
+  .notes li{margin:7px 0;font-size:13.5px;line-height:1.55}
+
   @media (max-width:820px){
     .cal{border:0;background:transparent}
     .cal-head{display:none}
@@ -181,6 +192,48 @@
     <tfoot id="aboFoot"></tfoot>
   </table>
   <p class="hint" id="aboHint"></p>
+
+  <h2>Notes — diète &amp; récupération</h2>
+  <div class="notes">
+    <details>
+      <summary>🍽️ Diète</summary>
+      <div class="body"><ul>
+        <li><b>Déficit modéré</b> : −300 à −400 kcal/j → 0,3–0,5 kg/sem. Gros déficit + 12 h d'entraînement = perf et muscle qui s'effondrent.</li>
+        <li><b>Protéines</b> 1,8–2,2 g/kg/j, réparties sur 3–4 repas (30–40 g chacun).</li>
+        <li><b>Pas de low-carb</b> : glucides autour des séances (avant 1–2 h + après). Dimanche (repos) plus bas.</li>
+        <li><b>Créatine</b> 5 g/j, tous les jours.</li>
+        <li><b>Hydratation</b> : 500 ml + électrolytes par séance dure.</li>
+        <li><b>Alcool</b> : minimise, surtout la veille du sparring.</li>
+        <li><b>Jours doubles (Lun/Mer/Ven)</b> : vrai repas entre les 2 séances (sinon craquage le soir).</li>
+      </ul></div>
+    </details>
+    <details>
+      <summary>⚖️ Suivi</summary>
+      <div class="body"><ul>
+        <li>Pèse-toi tous les matins, <b>moyenne sur 7 jours</b>.</li>
+        <li>Moyenne baisse <b>&gt; 0,7 kg/sem → +150–200 kcal</b> (trop vite = muscle qui part).</li>
+        <li><b>Plat 2 semaines → −150–200 kcal</b> ou +15 min Z2 ×3.</li>
+      </ul></div>
+    </details>
+    <details>
+      <summary>😴 Récupération</summary>
+      <div class="body"><ul>
+        <li><b>Deload semaine 4</b> : −40 % volume (~6–7 séances, zéro AMRAP, technique only). Non négociable.</li>
+        <li><b>Sommeil 7,5–8 h</b>. Fin 20:30 quatre soirs → excitation nerveuse. Pas d'écran post-séance, magnésium possible.</li>
+        <li>1 seul jour off (dim) → <b>jeudi vraiment léger</b> (BJJ = drilling, pas de rounds durs).</li>
+        <li>Marqueurs : FC/HRV matin, grip, humeur, appétit. 2+ signaux rouges → coupe un WOD.</li>
+      </ul></div>
+    </details>
+    <details>
+      <summary>🏋️ Entraînement</summary>
+      <div class="body"><ul>
+        <li><b>Vendredi 7:00 OnAir</b> : force à jeun 45 min OK ; si perf chute → 20 g whey + banane/dattes 15 min avant, vrai petit-déj après. Lourd, 3–5 reps, RIR 2. <b>Jamais sauté.</b></li>
+        <li><b>1 WOD/sem en Z2</b> (samedi) : allure conversationnelle, pas à fond.</li>
+        <li><b>Lun/Mer soir : boxe technique.</b> Sparring réservé mardi + samedi.</li>
+        <li><b>Cou + grip 2×/sem</b>, 2 min greffés sur une séance.</li>
+      </ul></div>
+    </details>
+  </div>
 </div>
 
 <script>
