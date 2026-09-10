@@ -155,8 +155,8 @@
   <div class="warn" id="warn"></div>
 
   <div class="tabs">
-    <button id="tabAgenda" class="on">Agenda</button>
-    <button id="tabGrid">Rectangle</button>
+    <button id="tabGrid" class="on">Calendrier</button>
+    <button id="tabAgenda">Agenda</button>
   </div>
 
   <div id="viewAgenda">
@@ -396,9 +396,9 @@ function render(plan){
 // plan picker
 const pick = el("planPick");
 pick.innerHTML = Object.entries(PLANS).map(([k,p])=>`<option value="${k}">${p.label}</option>`).join("");
-let curPlan = "actuel";
-try{ curPlan = localStorage.getItem("planningPlan"); }catch(e){}
-if(!PLANS[curPlan]) curPlan = "actuel";
+let curPlan = "onair";
+try{ const s = localStorage.getItem("planningPlan"); if(s) curPlan = s; }catch(e){}
+if(!PLANS[curPlan]) curPlan = "onair";
 pick.value = curPlan;
 pick.onchange = () => {
   curPlan = pick.value;
@@ -416,8 +416,8 @@ function setView(v){
 }
 tA.onclick=()=>setView("agenda");
 tG.onclick=()=>setView("grid");
-let savedView="agenda";
-try{ savedView=localStorage.getItem("planningView")||"agenda"; }catch(e){}
+let savedView="grid";
+try{ savedView=localStorage.getItem("planningView")||"grid"; }catch(e){}
 setView(savedView);
 
 render(PLANS[curPlan]);
