@@ -1,0 +1,426 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Planning Sport</title>
+<style>
+  :root{
+    --bg:#f7f7f5; --card:#ffffff; --ink:#1d1d1f; --muted:#6b6b70;
+    --line:#e3e3e0; --accent:#2f5597;
+    /* PowerCamp = famille bleue, nuance selon la discipline */
+    --pc-wod:#1c7ed6;   --pc-wod-bg:#e2eefb;
+    --pc-renfo:#1b4a8a; --pc-renfo-bg:#dde6f2;
+    --pc-gym:#63b3f6;   --pc-gym-bg:#e8f4fe;
+    /* Boxe AdamClub = rouge */
+    --adam:#c92a2a;     --adam-bg:#fbe4e4;
+    /* OnAir = ambre (boxe) / ambre clair (renfo) */
+    --onair-boxe:#e8590c;  --onair-boxe-bg:#fdecdf;
+    --onair-renfo:#f2a03d; --onair-renfo-bg:#fdf1e2;
+    /* BJJ LifeAcademy = vert */
+    --bjj:#2f9e44;      --bjj-bg:#e3f4e8;
+    --course:#7048e8;   --course-bg:#ece4fb;
+    --other:#6b6b70;    --other-bg:#ececec;
+  }
+  @media (prefers-color-scheme:dark){
+    :root{
+      --bg:#161617; --card:#1f1f21; --ink:#f2f2f2; --muted:#9a9aa0;
+      --line:#333336; --accent:#7aa2e3;
+      --pc-wod-bg:#16324e; --pc-renfo-bg:#132741; --pc-gym-bg:#1a3c58;
+      --adam-bg:#3a1c1c; --onair-boxe-bg:#3a2415; --onair-renfo-bg:#3a2c17;
+      --bjj-bg:#183024; --course-bg:#2a1f4d; --other-bg:#2a2a2c;
+    }
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font:15px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+  .wrap{max-width:1180px;margin:0 auto;padding:24px 20px 60px}
+  h1{font-size:22px;margin:0 0 4px}
+  .sub{color:var(--muted);margin:0 0 14px}
+
+  .pick{display:flex;align-items:center;gap:10px;margin-bottom:20px;flex-wrap:wrap}
+  .pick label{font-size:13px;color:var(--muted)}
+  .pick select{font:inherit;padding:7px 12px;border:1px solid var(--line);border-radius:8px;
+    background:var(--card);color:var(--ink)}
+
+  .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:24px}
+  .stat{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 16px}
+  .stat .n{font-size:22px;font-weight:700}
+  .stat .l{color:var(--muted);font-size:13px}
+
+  .legend{display:flex;flex-wrap:wrap;gap:14px;margin-bottom:16px}
+  .legend span{display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--muted)}
+  .dot{width:12px;height:12px;border-radius:4px;display:inline-block;border:1px solid rgba(0,0,0,.15)}
+
+  .warn{background:color-mix(in srgb,var(--card) 85%,var(--line));
+    border:1px solid var(--line);border-left:4px solid var(--accent);
+    border-radius:10px;padding:10px 14px;font-size:13px;margin-bottom:20px}
+
+  /* ---- calendar ---- */
+  .cal{background:var(--card);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+  .cal-head{display:grid;grid-template-columns:56px repeat(7,1fr);border-bottom:1px solid var(--line)}
+  .cal-head div{padding:10px 6px;text-align:center;font-weight:600;font-size:13px;border-left:1px solid var(--line)}
+  .cal-head div:first-child{border-left:0}
+  .cal-body{display:grid;grid-template-columns:56px repeat(7,1fr);position:relative}
+  .axis{border-right:1px solid var(--line)}
+  .axis .h{height:60px;position:relative;font-size:11px;color:var(--muted)}
+  .axis .h span{position:absolute;top:-7px;right:6px}
+  .col{position:relative;border-left:1px solid var(--line)}
+  .col .h{height:60px;border-bottom:1px dashed var(--line)}
+  .ev{position:absolute;left:4px;right:4px;border-radius:8px;padding:6px 8px;overflow:hidden;
+    border-left:4px solid var(--other);background:var(--other-bg);cursor:default}
+  .ev .t{font-weight:700;font-size:12px}
+  .ev .s{font-size:13px;font-weight:600}
+  .ev .p{font-size:12px;color:var(--muted)}
+  .ev.pc-wod{border-color:var(--pc-wod);background:var(--pc-wod-bg)}
+  .ev.pc-renfo{border-color:var(--pc-renfo);background:var(--pc-renfo-bg)}
+  .ev.pc-gym{border-color:var(--pc-gym);background:var(--pc-gym-bg)}
+  .ev.adam{border-color:var(--adam);background:var(--adam-bg)}
+  .ev.onair-boxe{border-color:var(--onair-boxe);background:var(--onair-boxe-bg)}
+  .ev.onair-renfo{border-color:var(--onair-renfo);background:var(--onair-renfo-bg)}
+  .ev.bjj{border-color:var(--bjj);background:var(--bjj-bg)}
+  .ev.course{border-color:var(--course);background:var(--course-bg)}
+
+  /* ---- view tabs + rectangular grid ---- */
+  .tabs{display:flex;gap:8px;margin-bottom:16px}
+  .tabs button{font:inherit;padding:7px 14px;border:1px solid var(--line);background:var(--card);
+    color:var(--ink);border-radius:8px;cursor:pointer}
+  .tabs button.on{background:var(--accent);color:#fff;border-color:var(--accent)}
+  .grid{width:100%;border-collapse:collapse;background:var(--card);border:1px solid var(--line);
+    border-radius:14px;overflow:hidden;font-size:13px;table-layout:fixed}
+  .grid th,.grid td{border:1px solid var(--line);padding:8px;text-align:center;vertical-align:middle}
+  .grid th{background:color-mix(in srgb,var(--card) 80%,var(--line));font-size:12px}
+  .grid td.slot{font-weight:700;white-space:nowrap;
+    background:color-mix(in srgb,var(--card) 88%,var(--line))}
+  .grid td .s{font-weight:700}
+  .grid td .p{font-size:11px;color:var(--muted)}
+  .grid td.pc-wod{background:var(--pc-wod-bg)}
+  .grid td.pc-renfo{background:var(--pc-renfo-bg)}
+  .grid td.pc-gym{background:var(--pc-gym-bg)}
+  .grid td.adam{background:var(--adam-bg)}
+  .grid td.onair-boxe{background:var(--onair-boxe-bg)}
+  .grid td.onair-renfo{background:var(--onair-renfo-bg)}
+  .grid td.bjj{background:var(--bjj-bg)}
+  .grid td.course{background:var(--course-bg)}
+  .grid td[class]{border-top:3px solid transparent}
+  .grid td.pc-wod{border-top-color:var(--pc-wod)}
+  .grid td.pc-renfo{border-top-color:var(--pc-renfo)}
+  .grid td.pc-gym{border-top-color:var(--pc-gym)}
+  .grid td.adam{border-top-color:var(--adam)}
+  .grid td.onair-boxe{border-top-color:var(--onair-boxe)}
+  .grid td.onair-renfo{border-top-color:var(--onair-renfo)}
+  .grid td.bjj{border-top-color:var(--bjj)}
+  .grid td.course{border-top-color:var(--course)}
+  @media (max-width:820px){ .grid{font-size:11px} .grid th,.grid td{padding:4px} }
+
+  /* ---- abonnements table ---- */
+  h2{font-size:16px;margin:32px 0 12px}
+  table.abo{width:100%;border-collapse:collapse;background:var(--card);
+    border:1px solid var(--line);border-radius:12px;overflow:hidden;font-size:14px}
+  table.abo th,table.abo td{padding:10px 12px;text-align:left;border-bottom:1px solid var(--line)}
+  table.abo th{background:color-mix(in srgb,var(--card) 80%,var(--line));font-size:12px;
+    text-transform:uppercase;letter-spacing:.04em;color:var(--muted)}
+  table.abo tr:last-child td{border-bottom:0}
+  table.abo td.num{text-align:right;font-variant-numeric:tabular-nums}
+  table.abo tr.flag td{background:var(--adam-bg)}
+  table.abo tr.good td{background:var(--bjj-bg)}
+  table.abo tfoot td{font-weight:700;background:color-mix(in srgb,var(--card) 80%,var(--line))}
+  .hint{color:var(--muted);font-size:12px;margin-top:8px}
+
+  @media (max-width:820px){
+    .cal{border:0;background:transparent}
+    .cal-head{display:none}
+    .cal-body{display:block}
+    .axis{display:none}
+    .col{border:1px solid var(--line);border-radius:12px;background:var(--card);
+      margin-bottom:14px;padding:8px;min-height:auto}
+    .col::before{content:attr(data-day);font-weight:700;font-size:14px;display:block;padding:4px 4px 8px}
+    .col .h{display:none}
+    .ev{position:static;left:auto;right:auto;margin:6px 0}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Planning Sport</h1>
+  <p class="sub" id="sub"></p>
+
+  <div class="pick">
+    <label for="planPick">Planning :</label>
+    <select id="planPick"></select>
+  </div>
+
+  <div class="stats" id="stats"></div>
+  <div class="legend" id="legend"></div>
+  <div class="warn" id="warn"></div>
+
+  <div class="tabs">
+    <button id="tabAgenda" class="on">Agenda</button>
+    <button id="tabGrid">Rectangle</button>
+  </div>
+
+  <div id="viewAgenda">
+    <div class="cal">
+      <div class="cal-head" id="calHead"></div>
+      <div class="cal-body" id="calBody"></div>
+    </div>
+  </div>
+
+  <div id="viewGrid" hidden>
+    <table class="grid" id="gridTable"></table>
+  </div>
+
+  <h2>Abonnements</h2>
+  <table class="abo" id="abo">
+    <thead><tr>
+      <th>Club</th><th>Sport</th><th>Facturation</th>
+      <th class="num">Montant</th><th class="num">Coût/mois</th>
+      <th class="num">Séances/sem</th><th class="num">Coût/séance</th><th>Statut</th>
+    </tr></thead>
+    <tbody id="aboBody"></tbody>
+    <tfoot id="aboFoot"></tfoot>
+  </table>
+  <p class="hint" id="aboHint"></p>
+</div>
+
+<script>
+/*PLANS-START*/
+const PLANS = {
+  "actuel": {
+    "label": "Planning actuel",
+    "sub": "Semaine type",
+    "note": "",
+    "day_start": "06:00",
+    "day_end": "22:00",
+    "sessions": [
+      {"day":"Lundi","start":"12:15","end":"13:15","sport":"WOD","place":"PowerCamp"},
+      {"day":"Lundi","start":"20:00","end":"21:00","sport":"Boxe Anglaise","place":"AdamClub"},
+      {"day":"Mardi","start":"19:00","end":"20:00","sport":"BJJ","place":"LifeAcademy"},
+      {"day":"Mercredi","start":"12:15","end":"13:15","sport":"WOD","place":"PowerCamp"},
+      {"day":"Mercredi","start":"20:00","end":"21:00","sport":"Boxe Anglaise","place":"AdamClub"},
+      {"day":"Jeudi","start":"12:15","end":"13:15","sport":"Gymnastique","place":"PowerCamp"},
+      {"day":"Jeudi","start":"19:00","end":"20:00","sport":"BJJ","place":"LifeAcademy"},
+      {"day":"Vendredi","start":"18:30","end":"19:30","sport":"WOD","place":"PowerCamp"},
+      {"day":"Samedi","start":"10:30","end":"12:00","sport":"WOD","place":"PowerCamp"}
+    ],
+    "subscriptions": [
+      {"name":"PowerCamp","type":"Box / WOD","billing":"Mensuel","amount":100,"per_month":100,"per_week":5,"per_session":4.62,"status":"Actif"},
+      {"name":"AdamClub","type":"Club boxe","billing":"Annuel","amount":360,"per_month":30,"per_week":2,"per_session":3.46,"status":"Actif"},
+      {"name":"LifeAcademy","type":"Club BJJ","billing":"Annuel","amount":600,"per_month":50,"per_week":2,"per_session":5.77,"status":"Actif"}
+    ],
+    "totals": {"per_month":180,"per_year":2160,"hours_week":9.5,"sessions_week":9}
+  },
+  "onair": {
+    "label": "Sans AdamClub — OnAir boxe ×3",
+    "sub": "Boxe OnAir : Lun 19:30, Mar 12:15, Mer 19:30 · + renfo vendredi matin",
+    "note": "Vendredi : renfo 7:00 (45 min, avant le boulot) puis WOD 18:30, 11 h d'écart.",
+    "day_start": "06:00",
+    "day_end": "22:00",
+    "sessions": [
+      {"day":"Lundi","start":"12:15","end":"13:15","sport":"WOD","place":"PowerCamp"},
+      {"day":"Lundi","start":"19:30","end":"20:30","sport":"Boxe Anglaise","place":"OnAir"},
+      {"day":"Mardi","start":"12:15","end":"13:15","sport":"Boxe Anglaise","place":"OnAir"},
+      {"day":"Mardi","start":"19:00","end":"20:00","sport":"BJJ","place":"LifeAcademy"},
+      {"day":"Mercredi","start":"12:15","end":"13:15","sport":"WOD","place":"PowerCamp"},
+      {"day":"Mercredi","start":"19:30","end":"20:30","sport":"Boxe Anglaise","place":"OnAir"},
+      {"day":"Jeudi","start":"12:15","end":"13:15","sport":"Gymnastique","place":"PowerCamp"},
+      {"day":"Jeudi","start":"19:00","end":"20:00","sport":"BJJ","place":"LifeAcademy"},
+      {"day":"Vendredi","start":"07:00","end":"07:45","sport":"Renforcement","place":"OnAir","note":"Bas du corps + tirage"},
+      {"day":"Vendredi","start":"18:30","end":"19:30","sport":"WOD","place":"PowerCamp"},
+      {"day":"Samedi","start":"10:30","end":"12:00","sport":"WOD","place":"PowerCamp"}
+    ],
+    "subscriptions": [
+      {"name":"PowerCamp","type":"Box / WOD","billing":"Mensuel","amount":100,"per_month":100,"per_week":5,"per_session":4.62,"status":"Actif"},
+      {"name":"OnAir","type":"Club boxe + renfo","billing":"Mensuel","amount":52,"per_month":52,"per_week":4,"per_session":3.00,"status":"Actif"},
+      {"name":"LifeAcademy","type":"Club BJJ","billing":"Annuel","amount":600,"per_month":50,"per_week":2,"per_session":5.77,"status":"Actif"}
+    ],
+    "totals": {"per_month":202,"per_year":2424,"hours_week":12.25,"sessions_week":11}
+  },
+  "planA": {
+    "label": "Plan A — 3 renfo OnAir",
+    "sub": "Semaine type + 3 séances de renforcement à OnAir",
+    "note": "Charge : 12 séances / 12,5 h sur 6 jours. Aucun jour de repos complet — réduis à 2 renfo/sem si fatigue.",
+    "day_start": "06:00",
+    "day_end": "22:00",
+    "sessions": [
+      {"day":"Lundi","start":"12:15","end":"13:15","sport":"WOD","place":"PowerCamp"},
+      {"day":"Lundi","start":"20:00","end":"21:00","sport":"Boxe Anglaise","place":"AdamClub"},
+      {"day":"Mardi","start":"12:15","end":"13:15","sport":"Boxe Anglaise","place":"OnAir"},
+      {"day":"Mardi","start":"19:00","end":"20:00","sport":"BJJ","place":"LifeAcademy"},
+      {"day":"Mercredi","start":"12:15","end":"13:15","sport":"WOD","place":"PowerCamp"},
+      {"day":"Mercredi","start":"20:00","end":"21:00","sport":"Boxe Anglaise","place":"AdamClub"},
+      {"day":"Jeudi","start":"12:15","end":"13:15","sport":"Renforcement","place":"OnAir","note":"Haut du corps"},
+      {"day":"Jeudi","start":"19:00","end":"20:00","sport":"BJJ","place":"LifeAcademy"},
+      {"day":"Vendredi","start":"12:15","end":"13:15","sport":"Renforcement","place":"OnAir","note":"Bas du corps"},
+      {"day":"Vendredi","start":"18:30","end":"19:30","sport":"WOD","place":"PowerCamp"},
+      {"day":"Samedi","start":"10:30","end":"12:00","sport":"WOD","place":"PowerCamp"},
+      {"day":"Dimanche","start":"10:30","end":"11:30","sport":"Renforcement","place":"OnAir","note":"Full body"}
+    ],
+    "subscriptions": [
+      {"name":"PowerCamp","type":"Box / WOD","billing":"Mensuel","amount":100,"per_month":100,"per_week":4,"per_session":5.77,"status":"Actif"},
+      {"name":"AdamClub","type":"Club boxe","billing":"Annuel","amount":360,"per_month":30,"per_week":2,"per_session":3.46,"status":"Actif"},
+      {"name":"OnAir","type":"Salle / cours boxe + renfo","billing":"Mensuel","amount":52,"per_month":52,"per_week":4,"per_session":3.00,"status":"Actif"},
+      {"name":"LifeAcademy","type":"Club BJJ","billing":"Annuel","amount":600,"per_month":50,"per_week":2,"per_session":5.77,"status":"Actif"}
+    ],
+    "totals": {"per_month":232,"per_year":2784,"hours_week":12.5,"sessions_week":12}
+  }
+};
+/*PLANS-END*/
+
+const DAYS = ["Lundi","Mardi","Mercredi","Jeudi","Vendredi","Samedi","Dimanche"];
+const toMin = t => { const [h,m]=t.split(":").map(Number); return h*60+m; };
+const fmtEur = n => (n==null?"—":n.toLocaleString("fr-FR",{minimumFractionDigits:2,maximumFractionDigits:2})+" €");
+
+// couleur = club, nuance = discipline
+function blockClass(s){
+  const p=(s.place||"").toLowerCase(), k=(s.sport||"").toLowerCase();
+  if(p.includes("powercamp")){
+    if(k.includes("wod")) return "pc-wod";
+    if(k.includes("gym")) return "pc-gym";
+    return "pc-renfo";              // haltéro, force, renfo, autre PowerCamp
+  }
+  if(p.includes("adam")) return "adam";
+  if(p.includes("onair"))
+    return (k.includes("renfo")||k.includes("muscu")||k.includes("halt")||k.includes("force"))
+      ? "onair-renfo" : "onair-boxe";
+  if(p.includes("lifeacademy")||k.includes("bjj")||k.includes("jjb")) return "bjj";
+  if(k.includes("course")||k.includes("run")) return "course";
+  return "other";
+}
+const CLASS_ORDER = ["pc-wod","pc-renfo","pc-gym","adam","onair-boxe","onair-renfo","bjj","course","other"];
+const CLASS_LABEL = {
+  "pc-wod":"PowerCamp · WOD",
+  "pc-renfo":"PowerCamp · Renfo",
+  "pc-gym":"PowerCamp · Gym",
+  "adam":"Boxe · AdamClub",
+  "onair-boxe":"Boxe · OnAir",
+  "onair-renfo":"Renfo · OnAir",
+  "bjj":"BJJ · LifeAcademy",
+  "course":"Course",
+  "other":"Autre"
+};
+
+const el = id => document.getElementById(id);
+const PXH = 60;
+
+function render(plan){
+  el("sub").textContent = plan.sub || "";
+  const st = plan.totals;
+  const START = toMin(plan.day_start), END = toMin(plan.day_end);
+  const HOURS = Math.ceil((END-START)/60);
+
+  // stats
+  el("stats").innerHTML = [
+    [st.sessions_week, "séances / semaine"],
+    [st.hours_week.toLocaleString("fr-FR")+" h", "par semaine"],
+    [fmtEur(st.per_month), "abonnements / mois"],
+    [fmtEur(st.per_year), "abonnements / an"],
+  ].map(([n,l])=>`<div class="stat"><div class="n">${n}</div><div class="l">${l}</div></div>`).join("");
+
+  // legend : par club + discipline
+  const counts = {};
+  plan.sessions.forEach(s=>{ const c=blockClass(s); counts[c]=(counts[c]||0)+1; });
+  el("legend").innerHTML = CLASS_ORDER.filter(c=>counts[c])
+    .map(c=>`<span><i class="dot" style="background:var(--${c})"></i>${CLASS_LABEL[c]} · ${counts[c]}×</span>`)
+    .join("");
+
+  // warn / info
+  const rest = DAYS.filter(d=>!plan.sessions.some(s=>s.day===d));
+  el("warn").innerHTML = (plan.note ? plan.note+" " : "")
+    + `<b>Repos complet :</b> ${rest.length ? rest.join(", ") : "aucun jour"}.`;
+
+  // agenda
+  el("calHead").innerHTML = `<div></div>` + DAYS.map(d=>`<div>${d}</div>`).join("");
+  const body = el("calBody");
+  let html = `<div class="axis">`;
+  for(let i=0;i<HOURS;i++){
+    const h = START/60 + i;
+    html += `<div class="h"><span>${String(h).padStart(2,"0")}:00</span></div>`;
+  }
+  html += `</div>`;
+  DAYS.forEach(day=>{
+    html += `<div class="col" data-day="${day}">`;
+    for(let i=0;i<HOURS;i++) html += `<div class="h"></div>`;
+    plan.sessions.filter(s=>s.day===day).forEach(s=>{
+      const top = (toMin(s.start)-START)/60*PXH;
+      const hgt = (toMin(s.end)-toMin(s.start))/60*PXH;
+      html += `<div class="ev ${blockClass(s)}" style="top:${top}px;height:${hgt}px">
+        <div class="t">${s.start}–${s.end}</div>
+        <div class="s">${s.sport}</div>
+        <div class="p">${s.place}${s.note?" · "+s.note:""}</div>
+      </div>`;
+    });
+    html += `</div>`;
+  });
+  body.innerHTML = html;
+  body.style.minHeight = (HOURS*PXH)+"px";
+
+  // rectangle
+  const slots = [...new Set(plan.sessions.map(s=>s.start+"–"+s.end))]
+    .sort((a,b)=> toMin(a.split("–")[0])-toMin(b.split("–")[0])
+               || toMin(a.split("–")[1])-toMin(b.split("–")[1]));
+  let g = `<thead><tr><th style="width:96px">Créneau</th>`
+        + DAYS.map(d=>`<th>${d}</th>`).join("") + `</tr></thead><tbody>`;
+  slots.forEach(sl=>{
+    g += `<tr><td class="slot">${sl}</td>`;
+    DAYS.forEach(day=>{
+      const m = plan.sessions.find(s=>s.day===day && s.start+"–"+s.end===sl);
+      g += m
+        ? `<td class="${blockClass(m)}"><div class="s">${m.sport}</div><div class="p">${m.place}${m.note?" · "+m.note:""}</div></td>`
+        : `<td></td>`;
+    });
+    g += `</tr>`;
+  });
+  g += `</tbody>`;
+  el("gridTable").innerHTML = g;
+
+  // abonnements
+  const vals = plan.subscriptions.filter(s=>s.per_session!=null).map(s=>s.per_session);
+  const mostExp = Math.max(...vals), cheapest = Math.min(...vals);
+  el("aboBody").innerHTML = plan.subscriptions.map(s=>`
+    <tr class="${s.per_session===mostExp?'flag':s.per_session===cheapest?'good':''}">
+      <td>${s.name}</td><td>${s.type}</td><td>${s.billing}</td>
+      <td class="num">${fmtEur(s.amount)}</td>
+      <td class="num">${fmtEur(s.per_month)}</td>
+      <td class="num">${s.per_week}</td>
+      <td class="num">${fmtEur(s.per_session)}</td>
+      <td>${s.status}</td>
+    </tr>`).join("");
+  el("aboFoot").innerHTML = `<tr><td colspan="4">Total actifs</td>
+    <td class="num">${fmtEur(st.per_month)}</td><td></td><td></td><td></td></tr>`;
+  el("aboHint").textContent =
+    `Vert = meilleur coût/séance (${fmtEur(cheapest)}), rouge = le plus cher (${fmtEur(mostExp)}). ` +
+    `Coût/séance = coût mensuel ÷ (séances/sem × 4,33).`;
+}
+
+// plan picker
+const pick = el("planPick");
+pick.innerHTML = Object.entries(PLANS).map(([k,p])=>`<option value="${k}">${p.label}</option>`).join("");
+let curPlan = "actuel";
+try{ curPlan = localStorage.getItem("planningPlan"); }catch(e){}
+if(!PLANS[curPlan]) curPlan = "actuel";
+pick.value = curPlan;
+pick.onchange = () => {
+  curPlan = pick.value;
+  try{ localStorage.setItem("planningPlan",curPlan); }catch(e){}
+  render(PLANS[curPlan]);
+};
+
+// view toggle
+const vA=el("viewAgenda"), vG=el("viewGrid"), tA=el("tabAgenda"), tG=el("tabGrid");
+function setView(v){
+  const grid = v==="grid";
+  vG.hidden=!grid; vA.hidden=grid;
+  tG.classList.toggle("on",grid); tA.classList.toggle("on",!grid);
+  try{ localStorage.setItem("planningView",v); }catch(e){}
+}
+tA.onclick=()=>setView("agenda");
+tG.onclick=()=>setView("grid");
+let savedView="agenda";
+try{ savedView=localStorage.getItem("planningView")||"agenda"; }catch(e){}
+setView(savedView);
+
+render(PLANS[curPlan]);
+</script>
+</body>
+</html>
