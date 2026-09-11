@@ -193,6 +193,12 @@
   </table>
   <p class="hint" id="aboHint"></p>
 
+  <h2>Comparatif financier — les 3 plannings</h2>
+  <div style="overflow-x:auto">
+    <table class="abo" id="compareTable"></table>
+  </div>
+  <p class="hint">1 ligne par abo : coût/mois (séances/sem×, coût/séance). — = abo non pris dans ce planning.</p>
+
   <h2>Notes — diète &amp; récupération</h2>
   <div class="notes">
     <details>
@@ -444,6 +450,35 @@ function render(plan){
     `Vert = meilleur coût/séance (${fmtEur(cheapest)}), rouge = le plus cher (${fmtEur(mostExp)}). ` +
     `Coût/séance = coût mensuel ÷ (séances/sem × 4,33).`;
 }
+
+// comparatif financier : toutes les formules cote a cote, toujours a jour
+function buildCompare(){
+  const order = ["actuel","onair","lesdeux"];
+  const plans = order.filter(k=>PLANS[k]).map(k=>PLANS[k]);
+  const clubs = ["PowerCamp","OnAir","AdamClub","LifeAcademy"];
+  const boxeCount = p => p.sessions.filter(s=>s.sport.toLowerCase().includes("boxe")).length;
+  let h = `<thead><tr><th>Formule</th>` + plans.map(p=>`<th>${p.label}</th>`).join("") + `</tr></thead><tbody>`;
+  const rows = [
+    ["Boxe / semaine", p=>boxeCount(p)+"×"],
+    ["Séances totales", p=>p.totals.sessions_week],
+    ["Heures / semaine", p=>p.totals.hours_week.toLocaleString("fr-FR")+" h"],
+  ];
+  rows.forEach(([label,fn])=>{
+    h += `<tr><td>${label}</td>` + plans.map(p=>`<td class="num">${fn(p)}</td>`).join("") + `</tr>`;
+  });
+  clubs.forEach(club=>{
+    h += `<tr><td>${club}</td>` + plans.map(p=>{
+      const s = p.subscriptions.find(x=>x.name===club);
+      if(!s) return `<td class="num">—</td>`;
+      return `<td class="num">${fmtEur(s.per_month)}<br><span style="color:var(--muted);font-size:11px">${s.per_week}×, ${fmtEur(s.per_session)}</span></td>`;
+    }).join("") + `</tr>`;
+  });
+  h += `<tr><td><b>Total / mois</b></td>` + plans.map(p=>`<td class="num"><b>${fmtEur(p.totals.per_month)}</b></td>`).join("") + `</tr>`;
+  h += `<tr><td><b>Total / an</b></td>` + plans.map(p=>`<td class="num"><b>${fmtEur(p.totals.per_year)}</b></td>`).join("") + `</tr>`;
+  h += `</tbody>`;
+  el("compareTable").innerHTML = h;
+}
+buildCompare();
 
 // plan picker
 const pick = el("planPick");
