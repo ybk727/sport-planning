@@ -92,6 +92,8 @@
   .grid th{background:color-mix(in srgb,var(--card) 80%,var(--line));font-size:12px}
   .grid td.slot{font-weight:700;white-space:nowrap;
     background:color-mix(in srgb,var(--card) 88%,var(--line))}
+  .grid tfoot td{font-weight:700;background:color-mix(in srgb,var(--card) 88%,var(--line));
+    border-top:2px solid var(--line);font-variant-numeric:tabular-nums}
   .grid td .s{font-weight:700}
   .grid td .p{font-size:11px;color:var(--muted)}
   .grid td.pc-wod{background:var(--pc-wod-bg)}
@@ -429,7 +431,15 @@ function render(plan){
     });
     g += `</tr>`;
   });
-  g += `</tbody>`;
+  g += `</tbody><tfoot><tr><td class="slot">Coût / jour</td>`;
+  DAYS.forEach(day=>{
+    const cost = plan.sessions.filter(s=>s.day===day).reduce((sum,s)=>{
+      const sub = plan.subscriptions.find(x=>x.name===s.place);
+      return sum + (sub && sub.per_session ? sub.per_session : 0);
+    }, 0);
+    g += `<td>${cost>0 ? fmtEur(cost) : "—"}</td>`;
+  });
+  g += `</tr></tfoot>`;
   el("gridTable").innerHTML = g;
 
   // abonnements
