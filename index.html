@@ -270,9 +270,9 @@ const PLANS = {
     "totals": {"per_month":180,"per_year":2160,"hours_week":9.5,"sessions_week":9}
   },
   "onair": {
-    "label": "Sans AdamClub — OnAir boxe ×3",
-    "sub": "Boxe OnAir : Lun 19:30, Mar 12:15, Mer 19:30 · renfo : Force mer + OnAir ven matin",
-    "note": "Renfo dédié ×2 : Force PowerCamp mercredi midi (haut) + OnAir vendredi 7:00 (bas). Vendredi : renfo 45 min avant le boulot puis WOD 18:30.",
+    "label": "Sans AdamClub — OnAir boxe ×3 + WTB ×4",
+    "sub": "Boxe OnAir : Lun 19:30, Mar 12:15, Mer 19:30 · WTB ×4 : Jeu PowerCamp midi, Ven/Sam/Dim OnAir",
+    "note": "⚠ 13 séances / 12,75 h, aucun jour de repos complet. Suggestion : garde Dimanche en repos par défaut — le WTB du dimanche sert de rattrapage si une séance Jeu/Ven/Sam saute, pas une 4e séance systématique en plus.",
     "day_start": "06:00",
     "day_end": "22:00",
     "sessions": [
@@ -282,18 +282,20 @@ const PLANS = {
       {"day":"Mardi","start":"19:00","end":"20:00","sport":"BJJ","place":"LifeAcademy"},
       {"day":"Mercredi","start":"12:15","end":"13:15","sport":"Force","place":"PowerCamp","note":"Renfo · haut du corps"},
       {"day":"Mercredi","start":"19:30","end":"20:30","sport":"Boxe Anglaise","place":"OnAir"},
-      {"day":"Jeudi","start":"12:15","end":"13:15","sport":"Gymnastique","place":"PowerCamp"},
+      {"day":"Jeudi","start":"12:15","end":"13:15","sport":"WTB","place":"PowerCamp","note":"Weak Things Break · squat"},
       {"day":"Jeudi","start":"19:00","end":"20:00","sport":"BJJ","place":"LifeAcademy"},
-      {"day":"Vendredi","start":"07:00","end":"07:45","sport":"Renforcement","place":"OnAir","note":"Bas du corps + tirage"},
+      {"day":"Vendredi","start":"07:00","end":"07:45","sport":"WTB","place":"OnAir","note":"Avant le boulot"},
       {"day":"Vendredi","start":"18:30","end":"19:30","sport":"WOD","place":"PowerCamp"},
-      {"day":"Samedi","start":"10:30","end":"12:00","sport":"WOD","place":"PowerCamp"}
+      {"day":"Samedi","start":"10:30","end":"12:00","sport":"WOD","place":"PowerCamp"},
+      {"day":"Samedi","start":"14:00","end":"14:45","sport":"WTB","place":"OnAir"},
+      {"day":"Dimanche","start":"10:30","end":"11:15","sport":"WTB","place":"OnAir","note":"Optionnel · rattrapage"}
     ],
     "subscriptions": [
-      {"name":"PowerCamp","type":"WOD / Force / Gym","billing":"Mensuel","amount":100,"per_month":100,"per_week":5,"per_session":4.62,"status":"Actif"},
-      {"name":"OnAir","type":"Club boxe + renfo","billing":"Mensuel","amount":52,"per_month":52,"per_week":4,"per_session":3.00,"status":"Actif"},
+      {"name":"PowerCamp","type":"WOD / Force / WTB","billing":"Mensuel","amount":100,"per_month":100,"per_week":5,"per_session":4.62,"status":"Actif"},
+      {"name":"OnAir","type":"Club boxe + WTB","billing":"Mensuel","amount":52,"per_month":52,"per_week":6,"per_session":2.00,"status":"Actif"},
       {"name":"LifeAcademy","type":"Club BJJ","billing":"Annuel","amount":600,"per_month":50,"per_week":2,"per_session":5.77,"status":"Actif"}
     ],
-    "totals": {"per_month":202,"per_year":2424,"hours_week":12.25,"sessions_week":11}
+    "totals": {"per_month":202,"per_year":2424,"hours_week":12.75,"sessions_week":13}
   },
   "lesdeux": {
     "label": "Les deux — OnAir Lun/Mar + AdamClub Mer",
@@ -339,7 +341,7 @@ function blockClass(s){
   }
   if(p.includes("adam")) return "adam";
   if(p.includes("onair"))
-    return (k.includes("renfo")||k.includes("muscu")||k.includes("halt")||k.includes("force"))
+    return (k.includes("renfo")||k.includes("muscu")||k.includes("halt")||k.includes("force")||k.includes("wtb"))
       ? "onair-renfo" : "onair-boxe";
   if(p.includes("lifeacademy")||k.includes("bjj")||k.includes("jjb")) return "bjj";
   if(k.includes("course")||k.includes("run")) return "course";
