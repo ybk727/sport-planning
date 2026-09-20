@@ -17,6 +17,7 @@
     /* OnAir = ambre (boxe) / ambre clair (renfo) */
     --onair-boxe:#e8590c;  --onair-boxe-bg:#fdecdf;
     --onair-renfo:#f2a03d; --onair-renfo-bg:#fdf1e2;
+    --wtb:var(--onair-renfo); --wtb-bg:var(--onair-renfo-bg);
     /* BJJ LifeAcademy = vert */
     --bjj:#2f9e44;      --bjj-bg:#e3f4e8;
     --course:#7048e8;   --course-bg:#ece4fb;
@@ -78,6 +79,7 @@
   .ev.adam{border-color:var(--adam);background:var(--adam-bg)}
   .ev.onair-boxe{border-color:var(--onair-boxe);background:var(--onair-boxe-bg)}
   .ev.onair-renfo{border-color:var(--onair-renfo);background:var(--onair-renfo-bg)}
+  .ev.wtb{border-color:var(--onair-renfo);background:var(--onair-renfo-bg)}
   .ev.bjj{border-color:var(--bjj);background:var(--bjj-bg)}
   .ev.course{border-color:var(--course);background:var(--course-bg)}
 
@@ -100,6 +102,7 @@
   .grid td.adam{background:var(--adam-bg)}
   .grid td.onair-boxe{background:var(--onair-boxe-bg)}
   .grid td.onair-renfo{background:var(--onair-renfo-bg)}
+  .grid td.wtb{background:var(--onair-renfo-bg)}
   .grid td.bjj{background:var(--bjj-bg)}
   .grid td.course{background:var(--course-bg)}
   .grid td[class]{border-top:3px solid transparent}
@@ -109,6 +112,7 @@
   .grid td.adam{border-top-color:var(--adam)}
   .grid td.onair-boxe{border-top-color:var(--onair-boxe)}
   .grid td.onair-renfo{border-top-color:var(--onair-renfo)}
+  .grid td.wtb{border-top-color:var(--onair-renfo)}
   .grid td.bjj{border-top-color:var(--bjj)}
   .grid td.course{border-top-color:var(--course)}
   @media (max-width:820px){ .grid{font-size:11px} .grid th,.grid td{padding:4px} }
@@ -334,6 +338,7 @@ const fmtEur = n => (n==null?"—":n.toLocaleString("fr-FR",{minimumFractionDigi
 // couleur = club, nuance = discipline
 function blockClass(s){
   const p=(s.place||"").toLowerCase(), k=(s.sport||"").toLowerCase();
+  if(k.includes("wtb")) return "wtb";   // meme couleur partout, quel que soit le lieu
   if(p.includes("powercamp")){
     if(k.includes("wod")) return "pc-wod";
     if(k.includes("gym")) return "pc-gym";
@@ -341,13 +346,13 @@ function blockClass(s){
   }
   if(p.includes("adam")) return "adam";
   if(p.includes("onair"))
-    return (k.includes("renfo")||k.includes("muscu")||k.includes("halt")||k.includes("force")||k.includes("wtb"))
+    return (k.includes("renfo")||k.includes("muscu")||k.includes("halt")||k.includes("force"))
       ? "onair-renfo" : "onair-boxe";
   if(p.includes("lifeacademy")||k.includes("bjj")||k.includes("jjb")) return "bjj";
   if(k.includes("course")||k.includes("run")) return "course";
   return "other";
 }
-const CLASS_ORDER = ["pc-wod","pc-renfo","pc-gym","adam","onair-boxe","onair-renfo","bjj","course","other"];
+const CLASS_ORDER = ["pc-wod","pc-renfo","pc-gym","adam","onair-boxe","onair-renfo","wtb","bjj","course","other"];
 const CLASS_LABEL = {
   "pc-wod":"PowerCamp · WOD",
   "pc-renfo":"PowerCamp · Renfo",
@@ -355,6 +360,7 @@ const CLASS_LABEL = {
   "adam":"Boxe · AdamClub",
   "onair-boxe":"Boxe · OnAir",
   "onair-renfo":"Renfo · OnAir",
+  "wtb":"WTB",
   "bjj":"BJJ · LifeAcademy",
   "course":"Course",
   "other":"Autre"
