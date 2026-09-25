@@ -269,19 +269,19 @@ const PLANS = {
     "subscriptions": [
       {"name":"PowerCamp","type":"WOD / Force / Gym","billing":"Mensuel","amount":100,"per_month":100,"per_week":5,"per_session":4.62,"status":"Actif"},
       {"name":"AdamClub","type":"Club boxe","billing":"Annuel","amount":360,"per_month":30,"per_week":2,"per_session":3.46,"status":"Actif"},
-      {"name":"LifeAcademy","type":"Club BJJ","billing":"Annuel","amount":600,"per_month":50,"per_week":2,"per_session":5.77,"status":"Actif"}
+      {"name":"LifeAcademy","type":"Club BJJ","billing":"Annuel","amount":800,"per_month":66.67,"per_week":2,"per_session":7.70,"status":"Actif"}
     ],
-    "totals": {"per_month":180,"per_year":2160,"hours_week":9.5,"sessions_week":9}
+    "totals": {"per_month":196.67,"per_year":2360,"hours_week":9.5,"sessions_week":9}
   },
   "onair": {
-    "label": "Sans AdamClub — OnAir boxe ×3 + WTB ×4",
-    "sub": "Boxe OnAir : Lun 19:30, Mar 12:15, Mer 19:30 · WTB ×4 : Jeu PowerCamp midi, Ven/Sam/Dim OnAir",
+    "label": "Sans AdamClub — OnAir boxe ×2 + WTB ×4",
+    "sub": "Boxe OnAir : Mar 12:15, Mer 19:30 · BJJ : Lun 19:30, Mar 19:00, Jeu 19:00 · WTB ×4",
     "note": "⚠ 13 séances / 12,75 h, aucun jour de repos complet. Suggestion : garde Dimanche en repos par défaut — le WTB du dimanche sert de rattrapage si une séance Jeu/Ven/Sam saute, pas une 4e séance systématique en plus.",
     "day_start": "06:00",
     "day_end": "22:00",
     "sessions": [
       {"day":"Lundi","start":"12:15","end":"13:15","sport":"WOD","place":"PowerCamp"},
-      {"day":"Lundi","start":"19:30","end":"20:30","sport":"Boxe Anglaise","place":"OnAir"},
+      {"day":"Lundi","start":"19:30","end":"20:30","sport":"BJJ","place":"LifeAcademy"},
       {"day":"Mardi","start":"12:15","end":"13:15","sport":"Boxe Anglaise","place":"OnAir"},
       {"day":"Mardi","start":"19:00","end":"20:00","sport":"BJJ","place":"LifeAcademy"},
       {"day":"Mercredi","start":"12:15","end":"13:15","sport":"Force","place":"PowerCamp","note":"Renfo · haut du corps"},
@@ -296,10 +296,10 @@ const PLANS = {
     ],
     "subscriptions": [
       {"name":"PowerCamp","type":"WOD / Force / WTB","billing":"Mensuel","amount":100,"per_month":100,"per_week":5,"per_session":4.62,"status":"Actif"},
-      {"name":"OnAir","type":"Club boxe + WTB","billing":"Mensuel","amount":52,"per_month":52,"per_week":6,"per_session":2.00,"status":"Actif"},
-      {"name":"LifeAcademy","type":"Club BJJ","billing":"Annuel","amount":600,"per_month":50,"per_week":2,"per_session":5.77,"status":"Actif"}
+      {"name":"OnAir","type":"Club boxe + WTB","billing":"Mensuel","amount":52,"per_month":52,"per_week":5,"per_session":2.40,"status":"Actif"},
+      {"name":"LifeAcademy","type":"Club BJJ","billing":"Annuel","amount":800,"per_month":66.67,"per_week":3,"per_session":5.13,"status":"Actif"}
     ],
-    "totals": {"per_month":202,"per_year":2424,"hours_week":12.75,"sessions_week":13}
+    "totals": {"per_month":218.67,"per_year":2624,"hours_week":12.75,"sessions_week":13}
   },
   "lesdeux": {
     "label": "Les deux — OnAir Lun/Mar + AdamClub Mer",
@@ -324,9 +324,9 @@ const PLANS = {
       {"name":"PowerCamp","type":"WOD / Force / Gym","billing":"Mensuel","amount":100,"per_month":100,"per_week":5,"per_session":4.62,"status":"Actif"},
       {"name":"OnAir","type":"Club boxe + renfo","billing":"Mensuel","amount":52,"per_month":52,"per_week":3,"per_session":4.00,"status":"Actif"},
       {"name":"AdamClub","type":"Club boxe","billing":"Annuel","amount":360,"per_month":30,"per_week":1,"per_session":6.93,"status":"Actif"},
-      {"name":"LifeAcademy","type":"Club BJJ","billing":"Annuel","amount":600,"per_month":50,"per_week":2,"per_session":5.77,"status":"Actif"}
+      {"name":"LifeAcademy","type":"Club BJJ","billing":"Annuel","amount":800,"per_month":66.67,"per_week":2,"per_session":7.70,"status":"Actif"}
     ],
-    "totals": {"per_month":232,"per_year":2784,"hours_week":11.25,"sessions_week":11}
+    "totals": {"per_month":248.67,"per_year":2984,"hours_week":11.25,"sessions_week":11}
   }
 };
 /*PLANS-END*/
